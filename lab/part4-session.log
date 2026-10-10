@@ -1,0 +1,2018 @@
+Script started on 2026-10-10 01:54:59+00:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="133" LINES="33"]
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ sha256sum scenario.shsha256sum scenario.sh
+cfa71a9845e0ee4f3accbd12cfae3583476109c33d0802b261ad7e123a3b323d  scenario.sh
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm lint ./broken-chart
+helm lint ./broken-chart
+
+==> Linting ./broken-chart
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ ./scenario.sh verify./scenario.sh verify
+==> verifying goal state in namespace debug-lab
+  FAIL  migrate Job has not completed (does it exist? did the chart even install cleanly?)
+  FAIL  deployment backend: 0/? ready
+  FAIL  deployment gateway: 0/? ready
+  FAIL  deployment worker: 0/? ready
+  FAIL  deployment reporter: 0/? ready
+  FAIL  deployment metrics: 0/? ready
+  PASS  no pods in CrashLoopBackOff
+  FAIL  ServiceAccount debug-lab/reporter cannot list pods
+  FAIL  backend does not answer on http://backend:8080/healthz
+  FAIL  gateway /status does not report backend=ok
+  FAIL  reporter /report does not return a pod count
+
+10 check(s) failing, 1 passing. Keep digging — every failure is a symptom.
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ cat broken-chart/templates/migrate-job.yaml
+cat broken-chart/templates/migrate-job.yaml
+
+{{- if .Values.migrate.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate
+  labels:
+    app: migrate
+    {{- include "lab.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.migrate.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        app: migrate
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: APP_MODE
+              value: "migrate"
+            - name: APP_NAME
+              value: "migrate"
+            - name: VERSION
+              value: "2.0.0"
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+{{- end }}
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$  nano broken-chart/templates/migrate-job.yamlbroken-chart/templates/migrate-job.yaml
+(B==(B(B[ Reading... ](B(B[ Read 41 lines ](B(B  GNU nano 8.7.1                                  broken-chart/templates/migrate-job.yaml                                            (B(B^G(B Help(B^O(B Write Out    (B^F(B Where Is     (B^K(B Cut(B^T(B Execute(B^C(B Location     (BM-U(B Undo(BM-A(B Set Mark(B^X(B Exit(B^R(B Read File    (B^\(B Replace(B^U(B Paste(B^J(B Justify(B^/(B Go To Line   (BM-E(B Redo(BM-6(B Copy{{(B- if .Values.migrate.enabled }}apiVersion: (Bbatch/v1kind: (BJobmetadata:name: (Bmigratelabels:app: (Bmigrate{{(B- include "lab.labels"(B . | nindent 4 }}spec:backoffLimit: {{(B .Values.migrate.backoffLimit }}template:metadata:labels:app: (Bmigratespec:restartPolicy: (BAlwayscontainers:(B - (Bname: (Bmigrateimage: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"imagePullPolicy: {{(B .Values.image.pullPolicy }}env:(B - (Bname: (BAPP_MODEvalue: "migrate"(B - (Bname: (BAPP_NAMEvalue: "migrate"(B - (Bname: (BVERSIONvalue: "2.0.0"securityContext:runAsNonRoot: true(B     Always(B*(B      (B N(BNever(BSave modified buffer?                                                                                                                 Y(B Yes(B N(B No  (BC(B Cancel(B^G(B Help(BM-D(B DOS Format(BM-A(B Append(BM-B(B Backup File(B^T(B Browse(B^C(B Cancel          (BM-M(B Mac Format(BM-P(B Prepend(B^Q(B Discard buffer(BWrite to File: broken-chart/templates/migrate-job.yaml(B     (B[ Writing... ](B(B (B(B[ Wrote 41 lines ](B>admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm template debug-lab ./broken-chart \
+  --namespace debug-lab \
+  --show-only templates/migrate-job.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm template debug-lab ./broken-chart \
+  --namespace debug-lab \
+  --show-only templates/migrate-job.yaml
+---
+# Source: debug-lab/templates/migrate-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate
+  labels:
+    app: migrate
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: APP_MODE
+              value: "migrate"
+            - name: APP_NAME
+              value: "migrate"
+            - name: VERSION
+              value: "2.0.0"
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 2: Investigating reporter RBAC ==="
+cat broken-chart/templates/rbac.yaml
+cat broken-chart/templates/reporter.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 2: Investigating reporter RBAC ==="
+cat broken-chart/templates/rbac.yaml
+cat broken-chart/templates/reporter.yaml
+=== Case 2: Investigating reporter RBAC ===
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reporter
+  labels:
+    app: reporter
+    {{- include "lab.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: reporter-read
+  labels:
+    app: reporter
+    {{- include "lab.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: reporter-read
+  labels:
+    app: reporter
+    {{- include "lab.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: reporter-read
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: {{ .Release.Namespace }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporter
+  labels:
+    app: reporter
+    {{- include "lab.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.reporter.replicas }}
+  selector:
+    matchLabels:
+      app: reporter
+  template:
+    metadata:
+      labels:
+        app: reporter
+        {{- include "lab.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.reporter.serviceAccountName }}
+      containers:
+        - name: reporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.common.port }}
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- range $name, $value := .Values.reporter.env }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.common.port }}
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            {{- toYaml .Values.reporter.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporter
+  labels:
+    app: reporter
+    {{- include "lab.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: reporter
+  ports:
+    - name: http
+      port: 8080
+      targetPort: {{ .Values.common.port }}
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ cat broken-chart/templates/reporter.yamlbacnano
+(B==(B(B[ Reading... ](B(B[ Read 35 lines ](B(B  GNU nano 8.7.1                                      broken-chart/templates/rbac.yaml                                               (B(B^G(B Help(B^O(B Write Out    (B^F(B Where Is     (B^K(B Cut(B^T(B Execute(B^C(B Location     (BM-U(B Undo(BM-A(B Set Mark(B^X(B Exit(B^R(B Read File    (B^\(B Replace(B^U(B Paste(B^J(B Justify(B^/(B Go To Line   (BM-E(B Redo(BM-6(B CopyapiVersion: (Bv1kind: (BServiceAccountmetadata:name: (Breporterlabels:app: (Breporter{{(B- include "lab.labels"(B . | nindent 4 }}(B---(BapiVersion: (Brbac.authorization.k8s.io/v1kind: (BRolemetadata:name: (Breporter-readlabels:app: (Breporter{{(B- include "lab.labels"(B . | nindent 4 }}rules:(B  - (BapiGroups: [(B""]resources: ["pods"]verbs: ["get", "list"](B---(BapiVersion: (Brbac.authorization.k8s.io/v1kind: (BRoleBindingmetadata:name: (Breporter-readlabels:app: (Breporter{{(B- include "lab.labels"(B . | nindent 4 }}roleRef:apiGroup: (Brbac.authorization.k8s.io78
+kind: (BRole78
+name: (Breporter-read78
+subjects:(B78
+(B  - (Bkind: (BServiceAccount78
+name: (Bdefault78
+namespace: {{(B .Release.Namespace }}(B78
+    default(B*(B       (B (Brepoar  rter(BSave modified buffer?                                                                                                                 Y(B Yes(B N(B No  (BC(B Cancel(B^G(B Help(BM-D(B DOS Format(BM-A(B Append(BM-B(B Backup File(B^T(B Browse(B^C(B Cancel          (BM-M(B Mac Format(BM-P(B Prepend(B^Q(B Discard buffer(BWrite to File: broken-chart/templates/rbac.yaml(B (B[ Writing... ](B(B (B(B[ Wrote 35 lines ](B>admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm template debug-lab ./broken-chart \
+  --namespace debug-lab \
+  --show-only templates/rbac.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm template debug-lab ./broken-chart \
+  --namespace debug-lab \
+  --show-only templates/rbac.yaml
+---
+# Source: debug-lab/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reporter
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+---
+# Source: debug-lab/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: reporter-read
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+---
+# Source: debug-lab/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: reporter-read
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: reporter-read
+subjects:
+  - kind: ServiceAccount
+    name: reporter
+    namespace: debug-lab
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 3: Investigating backend mode ==="
+grep -n -A12 '^backend:' broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 3: Investigating backend mode ==="
+grep -n -A12 '^backend:' broken-chart/values.yaml
+=== Case 3: Investigating backend mode ===
+18:backend:
+19-  replicas: 1
+20-  env:
+21-    APP_MODE: "api"
+22-    APP_NAME: "backend"
+23-    VERSION: "2.0.0"
+24-  resources:
+25-    requests:
+26-      cpu: "50m"
+27-      memory: "64Mi"
+28-    limits:
+29-      cpu: "200m"
+30-      memory: "128Mi"
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ nano /broken-chart/values.yaml/broken-chart/values.yaml
+(B==(B(B[ Reading... ](B(B[ Read 92 lines ](B(B  GNU nano 8.7.1                                          broken-chart/values.yaml                                                   (B(B^G(B Help(B^O(B Write Out    (B^F(B Where Is     (B^K(B Cut(B^T(B Execute(B^C(B Location     (BM-U(B Undo(BM-A(B Set Mark(B^X(B Exit(B^R(B Read File    (B^\(B Replace(B^U(B Paste(B^J(B Justify(B^/(B Go To Line   (BM-E(B Redo(BM-6(B Copy(B# Debug lab — values.## Lab rules (also in the assignment):#   * You may change anything in this chart — values or templates.#   * You may NOT change image.repository or image.tag.#   * You may NOT modify anything under ../cluster-state/.#   * You may NOT delete workloads to make a symptom disappear.(Bimage:repository: (Bdocker.io/ebinterview/eb-debug-apptag: "1.0.1"pullPolicy: (BIfNotPresentcommon:(B # Every workload serves plain HTTP on this port.(Bport: 8080backend:replicas: 1env:APP_MODE: "api"APP_NAME: "backend"VERSION: "2.0.0"resources:requests:cpu: "50m"memory: "64Mi"limits:cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+gateway:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "gateway"(B78
+APP_NAME: "gateway"(B78
+VERSION: "2.0.0"(B78
+BACKEND_URL: "http://backend.default.svc:8080"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+worker:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "worker"(B78
+APP_NAME: "worker"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+reporter:(B78
+replicas: 1(B78
+serviceAccountName: (Breporter78
+env:(B78
+APP_MODE: "reporter"(B78
+APP_NAME: "reporter"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+metrics:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "api"(B78
+APP_NAME: "metrics"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "2"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "4"(B78
+memory: "128Mi"(B78
+78
+migrate:(B78
+enabled: true(B78
+backoffLimit: 2(B78
+      (B*(B"""5"(B0"(Bm"(B"""2"(B0"(B00"(Bm"(B(BSave modified buffer?                                                                                                                 Y(B Yes(B N(B No  (BC(B Cancel(B^G(B Help(BM-D(B DOS Format(BM-A(B Append(BM-B(B Backup File(B^T(B Browse(B^C(B Cancel          (BM-M(B Mac Format(BM-P(B Prepend(B^Q(B Discard buffer(BWrite to File: broken-chart/values.yaml(B (B[ Writing... ](B(B (B(B[ Wrote 92 lines ](B>admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A6 '^backend:' broken-chart/values.yaml
+helm template debug-lab ./broken-chart --namespace debug-labadmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A6 '^backend:' broken-chart/values.yaml
+helm template debug-lab ./broken-chart --namespace debug-lab
+18:backend:
+19-  replicas: 1
+20-  env:
+21-    APP_MODE: "api"
+22-    APP_NAME: "backend"
+23-    VERSION: "2.0.0"
+24-  resources:
+---
+# Source: debug-lab/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reporter
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+---
+# Source: debug-lab/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: reporter-read
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+---
+# Source: debug-lab/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: reporter-read
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: reporter-read
+subjects:
+  - kind: ServiceAccount
+    name: reporter
+    namespace: debug-lab
+---
+# Source: debug-lab/templates/backend.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    app: backend
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+# Source: debug-lab/templates/gateway.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  labels:
+    app: gateway
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+---
+# Source: debug-lab/templates/reporter.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporter
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  selector:
+    app: reporter
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+# Source: debug-lab/templates/backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        app.kubernetes.io/part-of: eb-debug-lab
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: debug-lab-2.0.0
+    spec:
+      containers:
+        - name: backend
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_MODE
+              value: "api"
+            - name: APP_NAME
+              value: "backend"
+            - name: VERSION
+              value: "2.0.0"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+---
+# Source: debug-lab/templates/gateway.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  labels:
+    app: gateway
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+        app.kubernetes.io/part-of: eb-debug-lab
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: debug-lab-2.0.0
+    spec:
+      containers:
+        - name: gateway
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_MODE
+              value: "gateway"
+            - name: APP_NAME
+              value: "gateway"
+            - name: BACKEND_URL
+              value: "http://backend.default.svc:8080"
+            - name: VERSION
+              value: "2.0.0"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+---
+# Source: debug-lab/templates/metrics.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics
+  labels:
+    app: metrics
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics
+  template:
+    metadata:
+      labels:
+        app: metrics
+        app.kubernetes.io/part-of: eb-debug-lab
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: debug-lab-2.0.0
+    spec:
+      containers:
+        - name: metrics
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_MODE
+              value: "api"
+            - name: APP_NAME
+              value: "metrics"
+            - name: VERSION
+              value: "2.0.0"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+---
+# Source: debug-lab/templates/reporter.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporter
+  labels:
+    app: reporter
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporter
+  template:
+    metadata:
+      labels:
+        app: reporter
+        app.kubernetes.io/part-of: eb-debug-lab
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: debug-lab-2.0.0
+    spec:
+      serviceAccountName: reporter
+      containers:
+        - name: reporter
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: APP_MODE
+              value: "reporter"
+            - name: APP_NAME
+              value: "reporter"
+            - name: VERSION
+              value: "2.0.0"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+---
+# Source: debug-lab/templates/worker.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels:
+    app: worker
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+        app.kubernetes.io/part-of: eb-debug-lab
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: debug-lab-2.0.0
+    spec:
+      containers:
+        - name: worker
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_MODE
+              value: "worker"
+            - name: APP_NAME
+              value: "worker"
+            - name: VERSION
+              value: "2.0.0"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+---
+# Source: debug-lab/templates/migrate-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate
+  labels:
+    app: migrate
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: APP_MODE
+              value: "migrate"
+            - name: APP_NAME
+              value: "migrate"
+            - name: VERSION
+              value: "2.0.0"
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 4: Investigating gateway backend URL ==="
+grep -n -A10 '^gateway:' broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 4: Investigating gateway backend URL ==="
+grep -n -A10 '^gateway:' broken-chart/values.yaml
+=== Case 4: Investigating gateway backend URL ===
+32:gateway:
+33-  replicas: 1
+34-  env:
+35-    APP_MODE: "gateway"
+36-    APP_NAME: "gateway"
+37-    VERSION: "2.0.0"
+38-    BACKEND_URL: "http://backend.default.svc:8080"
+39-  resources:
+40-    requests:
+41-      cpu: "50m"
+42-      memory: "64Mi"
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ sed -i \
+  's|http://backend.default.svc:8080|http://backend.debug-lab.svc.cluster.local:8080|' \
+  broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ sed -i \
+  's|http://backend.default.svc:8080|http://backend.debug-lab.svc.cluster.local:8080|' \
+  broken-chart/values.yaml
+sed: preserving permissions for ‘broken-chart/sed7tz6zh’: Operation not permitted
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ sed -i   's|http://backend.default.svc:8080|http://backend.debug-lab.svc.cluster.local:8080|'   broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A10 '^gateway:' broken-chart/values.yaml sed -i   's|http://backend.default.svc:8080|http://backend.debug-lab.svc.cluster.local:8080|'   broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$
+sed -i   's|http://backend.default.svc:8080|http://backend.debug-lab.svc.cluster.local:8080|'   broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$
+nano broken-chart/values.yamlbroken-chart/values.yaml
+(B==(B(B[ Reading... ](B(B[ Read 92 lines ](B(B  GNU nano 8.7.1                                          broken-chart/values.yaml                                                   (B(B^G(B Help(B^O(B Write Out    (B^F(B Where Is     (B^K(B Cut(B^T(B Execute(B^C(B Location     (BM-U(B Undo(BM-A(B Set Mark(B^X(B Exit(B^R(B Read File    (B^\(B Replace(B^U(B Paste(B^J(B Justify(B^/(B Go To Line   (BM-E(B Redo(BM-6(B Copy(B# Debug lab — values.## Lab rules (also in the assignment):#   * You may change anything in this chart — values or templates.#   * You may NOT change image.repository or image.tag.#   * You may NOT modify anything under ../cluster-state/.#   * You may NOT delete workloads to make a symptom disappear.(Bimage:repository: (Bdocker.io/ebinterview/eb-debug-apptag: "1.0.1"pullPolicy: (BIfNotPresentcommon:(B # Every workload serves plain HTTP on this port.(Bport: 8080backend:replicas: 1env:APP_MODE: "api"APP_NAME: "backend"VERSION: "2.0.0"resources:requests:cpu: "50m"memory: "64Mi"limits:cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+gateway:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "gateway"(B78
+APP_NAME: "gateway"(B78
+VERSION: "2.0.0"(B78
+BACKEND_URL: "http://backend.debug-lab.svc.cluster.local:8080"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+worker:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "worker"(B78
+APP_NAME: "worker"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+reporter:(B78
+replicas: 1(B78
+serviceAccountName: (Breporter78
+env:(B78
+APP_MODE: "reporter"(B78
+APP_NAME: "reporter"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+metrics:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "api"(B78
+APP_NAME: "metrics"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+migrate:(B78
+enabled: true(B78
+backoffLimit: 2(B78
+>admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ nano broken-chart/values.yamlsed -i   's|http://backend.default.svc:8080|http://backend.debug-lab.svc.cluster.local:8080|'   broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A10 '^gateway:' broken-chart/values.yaml l
+32:gateway:
+33-  replicas: 1
+34-  env:
+35-    APP_MODE: "gateway"
+36-    APP_NAME: "gateway"
+37-    VERSION: "2.0.0"
+38-    BACKEND_URL: "http://backend.debug-lab.svc.cluster.local:8080"
+39-  resources:
+40-    requests:
+41-      cpu: "50m"
+42-      memory: "64Mi"
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm template debug-lab ./broken-chart \
+  --namespace debug-lab \
+  --show-only templates/gateway.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm template debug-lab ./broken-chart \
+  --namespace debug-lab \
+  --show-only templates/gateway.yaml
+---
+# Source: debug-lab/templates/gateway.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  labels:
+    app: gateway
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+---
+# Source: debug-lab/templates/gateway.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  labels:
+    app: gateway
+    app.kubernetes.io/part-of: eb-debug-lab
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: debug-lab-2.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+        app.kubernetes.io/part-of: eb-debug-lab
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: debug-lab-2.0.0
+    spec:
+      containers:
+        - name: gateway
+          image: "docker.io/ebinterview/eb-debug-app:1.0.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_MODE
+              value: "gateway"
+            - name: APP_NAME
+              value: "gateway"
+            - name: BACKEND_URL
+              value: "http://backend.debug-lab.svc.cluster.local:8080"
+            - name: VERSION
+              value: "2.0.0"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 5: Investigating metrics mode ==="
+grep -n -A12 '^metrics:' broken-chart/values.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 5: Investigating metrics mode ==="
+grep -n -A12 '^metrics:' broken-chart/values.yaml
+=== Case 5: Investigating metrics mode ===
+76:metrics:
+77-  replicas: 1
+78-  env:
+79-    APP_MODE: "api"
+80-    APP_NAME: "metrics"
+81-    VERSION: "2.0.0"
+82-  resources:
+83-    requests:
+84-      cpu: "50m"
+85-      memory: "64Mi"
+86-    limits:
+87-      cpu: "200m"
+88-      memory: "128Mi"
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A12 '^metrics:' broken-chart/values.yaml echo "=== Case 5: Investigating metrics mode ===" helm template debug-lab ./broken-chart   --namespace debug-lab   --show-only templates/gateway.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A10 '^gateway:' broken-chart/values.yaml nano
+
+(B==(B(B[ Reading... ](B(B[ Read 92 lines ](B(B  GNU nano 8.7.1                                          broken-chart/values.yaml                                                   (B(B^G(B Help(B^O(B Write Out    (B^F(B Where Is     (B^K(B Cut(B^T(B Execute(B^C(B Location     (BM-U(B Undo(BM-A(B Set Mark(B^X(B Exit(B^R(B Read File    (B^\(B Replace(B^U(B Paste(B^J(B Justify(B^/(B Go To Line   (BM-E(B Redo(BM-6(B Copy(B# Debug lab — values.## Lab rules (also in the assignment):#   * You may change anything in this chart — values or templates.#   * You may NOT change image.repository or image.tag.#   * You may NOT modify anything under ../cluster-state/.#   * You may NOT delete workloads to make a symptom disappear.(Bimage:repository: (Bdocker.io/ebinterview/eb-debug-apptag: "1.0.1"pullPolicy: (BIfNotPresentcommon:(B # Every workload serves plain HTTP on this port.(Bport: 8080backend:replicas: 1env:APP_MODE: "api"APP_NAME: "backend"VERSION: "2.0.0"resources:requests:cpu: "50m"memory: "64Mi"limits:cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+gateway:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "gateway"(B78
+APP_NAME: "gateway"(B78
+VERSION: "2.0.0"(B78
+BACKEND_URL: "http://backend.debug-lab.svc.cluster.local:8080"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+worker:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "worker"(B78
+APP_NAME: "worker"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+reporter:(B78
+replicas: 1(B78
+serviceAccountName: (Breporter78
+env:(B78
+APP_MODE: "reporter"(B78
+APP_NAME: "reporter"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+metrics:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "api"(B78
+APP_NAME: "metrics"(B78
+VERSION: "2.0.0"(B    (B*(B"(B"(B"""metrics"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+migrate:(B78
+enabled: true(B78
+backoffLimit: 2(B78
+(BSave modified buffer?                                                                                                                 Y(B Yes(B N(B No  (BC(B Cancel(B^G(B Help(BM-D(B DOS Format(BM-A(B Append(BM-B(B Backup File(B^T(B Browse(B^C(B Cancel          (BM-M(B Mac Format(BM-P(B Prepend(B^Q(B Discard buffer(BWrite to File: broken-chart/values.yaml(B (B[ Writing... ](B(B (B(B[ Wrote 92 lines ](B>admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A6 '^metrics:' broken-chart/values.yamlgrep -n -A6 '^metrics:' broken-chart/values.yaml
+76:metrics:
+77-  replicas: 1
+78-  env:
+79-    APP_MODE: "metrics"
+80-    APP_NAME: "metrics"
+81-    VERSION: "2.0.0"
+82-  resources:
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 6: Investigating metrics resources ==="
+grep -n -A12 '^metrics:' broken-chart/values.yaml
+cat cluster-state/limits.yamladmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ echo "=== Case 6: Investigating metrics resources ==="
+grep -n -A12 '^metrics:' broken-chart/values.yaml
+cat cluster-state/limits.yaml
+=== Case 6: Investigating metrics resources ===
+76:metrics:
+77-  replicas: 1
+78-  env:
+79-    APP_MODE: "metrics"
+80-    APP_NAME: "metrics"
+81-    VERSION: "2.0.0"
+82-  resources:
+83-    requests:
+84-      cpu: "50m"
+85-      memory: "64Mi"
+86-    limits:
+87-      cpu: "200m"
+88-      memory: "128Mi"
+# Part of the lab environment. DO NOT MODIFY — the grading harness re-applies
+# the pristine copy of everything in cluster-state/ before evaluating your
+# chart, so changes here cannot fix anything and will be flagged.
+#
+# This LimitRange mirrors the guardrails on our shared clusters: sane defaults
+# for pods that don't specify resources, and a hard per-container ceiling.
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: debug-lab-guardrails
+  namespace: debug-lab
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 50m
+        memory: 64Mi
+      default:
+        cpu: 200m
+        memory: 128Mi
+      max:
+        cpu: "1"
+        memory: 512Mi
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ cat cluster-state/limits.yamlgrep -n -A12 '^metrics:' broken-chart/values.yaml cat cluster-state/limit
+nano broken-chart/values.yamlbroken-chart/values.yaml
+(B==(B(B[ Reading... ](B(B[ Read 92 lines ](B(B  GNU nano 8.7.1                                          broken-chart/values.yaml                                                   (B(B^G(B Help(B^O(B Write Out    (B^F(B Where Is     (B^K(B Cut(B^T(B Execute(B^C(B Location     (BM-U(B Undo(BM-A(B Set Mark(B^X(B Exit(B^R(B Read File    (B^\(B Replace(B^U(B Paste(B^J(B Justify(B^/(B Go To Line   (BM-E(B Redo(BM-6(B Copy(B# Debug lab — values.## Lab rules (also in the assignment):#   * You may change anything in this chart — values or templates.#   * You may NOT change image.repository or image.tag.#   * You may NOT modify anything under ../cluster-state/.#   * You may NOT delete workloads to make a symptom disappear.(Bimage:repository: (Bdocker.io/ebinterview/eb-debug-apptag: "1.0.1"pullPolicy: (BIfNotPresentcommon:(B # Every workload serves plain HTTP on this port.(Bport: 8080backend:replicas: 1env:APP_MODE: "api"APP_NAME: "backend"VERSION: "2.0.0"resources:requests:cpu: "50m"memory: "64Mi"limits:cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+gateway:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "gateway"(B78
+APP_NAME: "gateway"(B78
+VERSION: "2.0.0"(B78
+BACKEND_URL: "http://backend.debug-lab.svc.cluster.local:8080"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+worker:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "worker"(B78
+APP_NAME: "worker"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+reporter:(B78
+replicas: 1(B78
+serviceAccountName: (Breporter78
+env:(B78
+APP_MODE: "reporter"(B78
+APP_NAME: "reporter"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+metrics:(B78
+replicas: 1(B78
+env:(B78
+APP_MODE: "metrics"(B78
+APP_NAME: "metrics"(B78
+VERSION: "2.0.0"(B78
+resources:(B78
+requests:(B78
+cpu: "50m"(B78
+memory: "64Mi"(B78
+limits:(B78
+cpu: "200m"(B78
+memory: "128Mi"(B78
+78
+migrate:(B78
+enabled: true(B78
+backoffLimit: 2(B78
+>admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A12 '^backend:' broken-chart/values.yaml
+grep -n -A12 '^backend:' broken-chart/values.yaml
+
+18:backend:
+19-  replicas: 1
+20-  env:
+21-    APP_MODE: "api"
+22-    APP_NAME: "backend"
+23-    VERSION: "2.0.0"
+24-  resources:
+25-    requests:
+26-      cpu: "50m"
+27-      memory: "64Mi"
+28-    limits:
+29-      cpu: "200m"
+30-      memory: "128Mi"
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A12 '^backend:' broken-chart/values.yaml
+ nano
+(B==(B(B[ Reading... ](B(B[ Read 92 lines ](B(B  GNU nano 8.7.1                                          broken-chart/values.yaml                                                   (B(B^G(B Help(B^O(B Write Out    (B^F(B Where Is     (B^K(B Cut(B^T(B Execute(B^C(B Location     (BM-U(B Undo(BM-A(B Set Mark(B^X(B Exit(B^R(B Read File    (B^\(B Replace(B^U(B Paste(B^J(B Justify(B^/(B Go To Line   (BM-E(B Redo(BM-6(B Copy(B# Debug lab — values.## Lab rules (also in the assignment):#   * You may change anything in this chart — values or templates.#   * You may NOT change image.repository or image.tag.#   * You may NOT modify anything under ../cluster-state/.#   * You may NOT delete workloads to make a symptom disappear.(Bimage:repository: (Bdocker.io/ebinterview/eb-debug-apptag: "1.0.1"pullPolicy: (BIfNotPresentcommon:(B # Every workload serves plain HTTP on this port.(Bport: 8080backend:replicas: 1env:APP_MODE: "api"APP_NAME: "backend"VERSION: "2.0.0"resources:requests:cpu: "50m"memory: "64Mi"limits:cpu: "200m"(B    (B*(B"(B"(B"""b"(Ba"(Bc"(Bk"(Be"(Bn"(Bd"(B(BSave modified buffer?                                                                                                                 Y(B Yes(B N(B No  (BC(B Cancel(B^G(B Help(BM-D(B DOS Format(BM-A(B Append(BM-B(B Backup File(B^T(B Browse(B^C(B Cancel          (BM-M(B Mac Format(BM-P(B Prepend(B^Q(B Discard buffer(BWrite to File: broken-chart/values.yaml(B (B[ Writing... ](B(B (B(B[ Wrote 92 lines ](B>admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm lint ./broken-chart
+
+helm template debug-lab ./broken-chart \
+  --namespace debug-lab > /tmp/solved-chart.yaml
+
+./scenario.sh up
+./scenario.sh verifyadmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ helm lint ./broken-chart
+
+helm template debug-lab ./broken-chart \
+  --namespace debug-lab > /tmp/solved-chart.yaml
+
+./scenario.sh up
+./scenario.sh verify
+==> Linting ./broken-chart
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+==> applying cluster environment (cluster-state/)
+namespace/debug-lab created
+Error from server (NotFound): error when creating "cluster-state/limits.yaml": namespaces "debug-lab" not found
+==> installing the broken chart
+Release "debug-lab" does not exist. Installing it now.
+NAME: debug-lab
+LAST DEPLOYED: Sat Oct 10 02:03:54 2026
+NAMESPACE: debug-lab
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+debug-lab installed into namespace debug-lab.
+
+Goal state:
+  * migrate Job: Completed
+  * backend, gateway, worker, reporter, metrics: all pods Running and 1/1 Ready
+  * gateway /status reports {"self":"ok","backend":"ok",...}
+
+Check your progress at any time:
+  ./scenario.sh verify
+
+Lab is (partially) installed. Investigate with kubectl, fix the chart,
+re-run './scenario.sh up' to apply your fixes, and './scenario.sh verify'
+to check progress.
+==> verifying goal state in namespace debug-lab
+  FAIL  migrate Job has not completed (does it exist? did the chart even install cleanly?)
+  FAIL  deployment backend: 0/1 ready
+  FAIL  deployment gateway: 0/1 ready
+  FAIL  deployment worker: 0/1 ready
+  FAIL  deployment reporter: 0/1 ready
+  FAIL  deployment metrics: 0/1 ready
+  PASS  no pods in CrashLoopBackOff
+  PASS  ServiceAccount debug-lab/reporter can list pods
+  FAIL  backend does not answer on http://backend:8080/healthz
+  FAIL  gateway /status does not report backend=ok
+  FAIL  reporter /report does not return a pod count
+
+9 check(s) failing, 2 passing. Keep digging — every failure is a symptom.
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ ./scenario.sh verifyup
+==> applying cluster environment (cluster-state/)
+limitrange/debug-lab-guardrails created
+namespace/debug-lab unchanged
+==> installing the broken chart
+Release "debug-lab" has been upgraded. Happy Helming!
+NAME: debug-lab
+LAST DEPLOYED: Sat Oct 10 02:04:14 2026
+NAMESPACE: debug-lab
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+NOTES:
+debug-lab installed into namespace debug-lab.
+
+Goal state:
+  * migrate Job: Completed
+  * backend, gateway, worker, reporter, metrics: all pods Running and 1/1 Ready
+  * gateway /status reports {"self":"ok","backend":"ok",...}
+
+Check your progress at any time:
+  ./scenario.sh verify
+
+Lab is (partially) installed. Investigate with kubectl, fix the chart,
+re-run './scenario.sh up' to apply your fixes, and './scenario.sh verify'
+to check progress.
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ ./scenario.sh upverify
+==> verifying goal state in namespace debug-lab
+  FAIL  migrate Job has not completed (does it exist? did the chart even install cleanly?)
+  FAIL  deployment backend: 0/1 ready
+  FAIL  deployment gateway: 0/1 ready
+  FAIL  deployment worker: 0/1 ready
+  FAIL  deployment reporter: 0/1 ready
+  FAIL  deployment metrics: 0/1 ready
+  PASS  no pods in CrashLoopBackOff
+  PASS  ServiceAccount debug-lab/reporter can list pods
+  FAIL  backend does not answer on http://backend:8080/healthz
+  FAIL  gateway /status does not report backend=ok
+  FAIL  reporter /report does not return a pod count
+
+9 check(s) failing, 2 passing. Keep digging — every failure is a symptom.
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ cd /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab
+
+echo "=== Pods and status ==="
+kubectl get pods -n debug-lab -o wide
+
+echo "=== Recent events ==="
+kubectl get events -n debug-lab --sort-by=.lastTimestamp
+
+echo "=== Deployments ==="
+kubectl get deployments -n debug-lab
+
+echo "=== Migration Job ==="
+kubectl describe job migrate -n debug-lab
+
+echo "=== Pod details ==="
+kubectl describe pods -n debug-labadmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ cd /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab
+
+echo "=== Pods and status ==="
+kubectl get pods -n debug-lab -o wide
+
+echo "=== Recent events ==="
+kubectl get events -n debug-lab --sort-by=.lastTimestamp
+
+echo "=== Deployments ==="
+kubectl get deployments -n debug-lab
+
+echo "=== Migration Job ==="
+kubectl describe job migrate -n debug-lab
+
+echo "=== Pod details ==="
+kubectl describe pods -n debug-lab
+=== Pods and status ===
+NAME                        READY   STATUS                       RESTARTS   AGE    IP             NODE                 NOMINATED NODE   READINESS GATES
+backend-6bc9d99d6f-rvg8d    0/1     CreateContainerConfigError   0          2m6s   10.244.0.121   demo-control-plane   <none>           <none>
+gateway-74dd69c444-r7lx7    0/1     CreateContainerConfigError   0          2m6s   10.244.0.124   demo-control-plane   <none>           <none>
+metrics-6bf785f8c-kn769     0/1     CreateContainerConfigError   0          2m6s   10.244.0.122   demo-control-plane   <none>           <none>
+migrate-brc6n               0/1     CreateContainerConfigError   0          2m6s   10.244.0.119   demo-control-plane   <none>           <none>
+reporter-6f7cc7495f-vzkbr   0/1     CreateContainerConfigError   0          2m6s   10.244.0.120   demo-control-plane   <none>           <none>
+worker-7694df7b9c-27hbm     0/1     CreateContainerConfigError   0          2m6s   10.244.0.123   demo-control-plane   <none>           <none>
+=== Recent events ===
+LAST SEEN   TYPE      REASON              OBJECT                           MESSAGE
+2m7s        Normal    Scheduled           pod/reporter-6f7cc7495f-vzkbr    Successfully assigned debug-lab/reporter-6f7cc7495f-vzkbr to demo-control-plane
+2m7s        Normal    SuccessfulCreate    job/migrate                      Created pod: migrate-brc6n
+2m7s        Normal    SuccessfulCreate    replicaset/reporter-6f7cc7495f   Created pod: reporter-6f7cc7495f-vzkbr
+2m7s        Normal    SuccessfulCreate    replicaset/backend-6bc9d99d6f    Created pod: backend-6bc9d99d6f-rvg8d
+2m7s        Normal    ScalingReplicaSet   deployment/backend               Scaled up replica set backend-6bc9d99d6f from 0 to 1
+2m7s        Normal    ScalingReplicaSet   deployment/worker                Scaled up replica set worker-7694df7b9c from 0 to 1
+2m7s        Normal    Scheduled           pod/worker-7694df7b9c-27hbm      Successfully assigned debug-lab/worker-7694df7b9c-27hbm to demo-control-plane
+2m7s        Normal    Scheduled           pod/backend-6bc9d99d6f-rvg8d     Successfully assigned debug-lab/backend-6bc9d99d6f-rvg8d to demo-control-plane
+2m7s        Normal    ScalingReplicaSet   deployment/reporter              Scaled up replica set reporter-6f7cc7495f from 0 to 1
+2m7s        Normal    ScalingReplicaSet   deployment/gateway               Scaled up replica set gateway-74dd69c444 from 0 to 1
+2m7s        Normal    SuccessfulCreate    replicaset/worker-7694df7b9c     Created pod: worker-7694df7b9c-27hbm
+2m7s        Normal    Scheduled           pod/migrate-brc6n                Successfully assigned debug-lab/migrate-brc6n to demo-control-plane
+2m7s        Normal    ScalingReplicaSet   deployment/metrics               Scaled up replica set metrics-6bf785f8c from 0 to 1
+2m7s        Normal    Scheduled           pod/gateway-74dd69c444-r7lx7     Successfully assigned debug-lab/gateway-74dd69c444-r7lx7 to demo-control-plane
+2m7s        Normal    SuccessfulCreate    replicaset/metrics-6bf785f8c     Created pod: metrics-6bf785f8c-kn769
+2m7s        Normal    Scheduled           pod/metrics-6bf785f8c-kn769      Successfully assigned debug-lab/metrics-6bf785f8c-kn769 to demo-control-plane
+2m7s        Normal    SuccessfulCreate    replicaset/gateway-74dd69c444    Created pod: gateway-74dd69c444-r7lx7
+2m2s        Normal    Started             pod/eb-verify-probe              Started container eb-verify-probe
+2m2s        Normal    Pulled              pod/eb-verify-probe              Container image "busybox:1.36" already present on machine
+2m2s        Normal    Scheduled           pod/eb-verify-probe              Successfully assigned debug-lab/eb-verify-probe to demo-control-plane
+2m2s        Normal    Created             pod/eb-verify-probe              Created container: eb-verify-probe
+100s        Normal    Scheduled           pod/eb-verify-probe              Successfully assigned debug-lab/eb-verify-probe to demo-control-plane
+99s         Normal    Pulled              pod/eb-verify-probe              Container image "busybox:1.36" already present on machine
+99s         Normal    Created             pod/eb-verify-probe              Created container: eb-verify-probe
+99s         Normal    Started             pod/eb-verify-probe              Started container eb-verify-probe
+13s         Warning   Failed              pod/worker-7694df7b9c-27hbm      Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "worker-7694df7b9c-27hbm_debug-lab(9b77f2d6-f6c6-44a4-9dd7-3f81462dc975)", container: worker)
+13s         Normal    Pulled              pod/worker-7694df7b9c-27hbm      Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+12s         Normal    Pulled              pod/backend-6bc9d99d6f-rvg8d     Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+12s         Warning   Failed              pod/backend-6bc9d99d6f-rvg8d     Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "backend-6bc9d99d6f-rvg8d_debug-lab(1f3d9f26-9543-41eb-99ee-18ad82dc543f)", container: backend)
+3s          Normal    Pulled              pod/gateway-74dd69c444-r7lx7     Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+3s          Warning   Failed              pod/gateway-74dd69c444-r7lx7     Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "gateway-74dd69c444-r7lx7_debug-lab(4b5f18d2-2022-48ca-a2df-e68e11c3a325)", container: gateway)
+2s          Normal    Pulled              pod/metrics-6bf785f8c-kn769      Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+2s          Warning   Failed              pod/metrics-6bf785f8c-kn769      Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "metrics-6bf785f8c-kn769_debug-lab(13f8c033-a353-42dd-b3aa-1f3b2667250b)", container: metrics)
+1s          Warning   Failed              pod/reporter-6f7cc7495f-vzkbr    Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "reporter-6f7cc7495f-vzkbr_debug-lab(e3b30cfd-900c-4343-b221-02e7c36c3ec9)", container: reporter)
+1s          Normal    Pulled              pod/reporter-6f7cc7495f-vzkbr    Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+1s          Warning   Failed              pod/migrate-brc6n                Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "migrate-brc6n_debug-lab(d98b35ef-f23e-4a99-a0f0-410e7c9bed4e)", container: migrate)
+1s          Normal    Pulled              pod/migrate-brc6n                Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+=== Deployments ===
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+backend    0/1     1            0           2m7s
+gateway    0/1     1            0           2m7s
+metrics    0/1     1            0           2m7s
+reporter   0/1     1            0           2m7s
+worker     0/1     1            0           2m7s
+=== Migration Job ===
+Name:             migrate
+Namespace:        debug-lab
+Selector:         batch.kubernetes.io/controller-uid=6c8fac4d-ce30-4cd3-ab90-e223f3a063eb
+Labels:           app=migrate
+                  app.kubernetes.io/managed-by=Helm
+                  app.kubernetes.io/part-of=eb-debug-lab
+                  helm.sh/chart=debug-lab-2.0.0
+Annotations:      meta.helm.sh/release-name: debug-lab
+                  meta.helm.sh/release-namespace: debug-lab
+Parallelism:      1
+Completions:      1
+Completion Mode:  NonIndexed
+Suspend:          false
+Backoff Limit:    2
+Start Time:       Sat, 10 Oct 2026 02:03:54 +0000
+Pods Statuses:    1 Active (0 Ready) / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:  app=migrate
+           batch.kubernetes.io/controller-uid=6c8fac4d-ce30-4cd3-ab90-e223f3a063eb
+           batch.kubernetes.io/job-name=migrate
+           controller-uid=6c8fac4d-ce30-4cd3-ab90-e223f3a063eb
+           job-name=migrate
+  Containers:
+   migrate:
+    Image:      docker.io/ebinterview/eb-debug-app:1.0.1
+    Port:       <none>
+    Host Port:  <none>
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:     50m
+      memory:  64Mi
+    Environment:
+      APP_MODE:    migrate
+      APP_NAME:    migrate
+      VERSION:     2.0.0
+    Mounts:        <none>
+  Volumes:         <none>
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Events:
+  Type    Reason            Age   From            Message
+  ----    ------            ----  ----            -------
+  Normal  SuccessfulCreate  2m7s  job-controller  Created pod: migrate-brc6n
+=== Pod details ===
+Name:             backend-6bc9d99d6f-rvg8d
+Namespace:        debug-lab
+Priority:         0
+Service Account:  default
+Node:             demo-control-plane/172.19.0.2
+Start Time:       Sat, 10 Oct 2026 02:03:54 +0000
+Labels:           app=backend
+                  app.kubernetes.io/managed-by=Helm
+                  app.kubernetes.io/part-of=eb-debug-lab
+                  helm.sh/chart=debug-lab-2.0.0
+                  pod-template-hash=6bc9d99d6f
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.121
+IPs:
+  IP:           10.244.0.121
+Controlled By:  ReplicaSet/backend-6bc9d99d6f
+Containers:
+  backend:
+    Container ID:
+    Image:          docker.io/ebinterview/eb-debug-app:1.0.1
+    Image ID:
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:      50m
+      memory:   64Mi
+    Readiness:  http-get http://:8080/healthz delay=3s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      APP_MODE:  backend
+      APP_NAME:  backend
+      VERSION:   2.0.0
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2l9gn (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  kube-api-access-2l9gn:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  2m7s                default-scheduler  Successfully assigned debug-lab/backend-6bc9d99d6f-rvg8d to demo-control-plane
+  Normal   Pulled     0s (x12 over 2m6s)  kubelet            spec.containers{backend}: Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+  Warning  Failed     0s (x12 over 2m6s)  kubelet            spec.containers{backend}: Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "backend-6bc9d99d6f-rvg8d_debug-lab(1f3d9f26-9543-41eb-99ee-18ad82dc543f)", container: backend)
+
+
+Name:             gateway-74dd69c444-r7lx7
+Namespace:        debug-lab
+Priority:         0
+Service Account:  default
+Node:             demo-control-plane/172.19.0.2
+Start Time:       Sat, 10 Oct 2026 02:03:54 +0000
+Labels:           app=gateway
+                  app.kubernetes.io/managed-by=Helm
+                  app.kubernetes.io/part-of=eb-debug-lab
+                  helm.sh/chart=debug-lab-2.0.0
+                  pod-template-hash=74dd69c444
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.124
+IPs:
+  IP:           10.244.0.124
+Controlled By:  ReplicaSet/gateway-74dd69c444
+Containers:
+  gateway:
+    Container ID:
+    Image:          docker.io/ebinterview/eb-debug-app:1.0.1
+    Image ID:
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:      50m
+      memory:   64Mi
+    Readiness:  http-get http://:8080/healthz delay=3s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      APP_MODE:     gateway
+      APP_NAME:     gateway
+      BACKEND_URL:  http://backend.debug-lab.svc.cluster.local:8080
+      VERSION:      2.0.0
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-l5mql (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  kube-api-access-l5mql:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  2m7s                default-scheduler  Successfully assigned debug-lab/gateway-74dd69c444-r7lx7 to demo-control-plane
+  Normal   Pulled     3s (x11 over 2m6s)  kubelet            spec.containers{gateway}: Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+  Warning  Failed     3s (x11 over 2m6s)  kubelet            spec.containers{gateway}: Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "gateway-74dd69c444-r7lx7_debug-lab(4b5f18d2-2022-48ca-a2df-e68e11c3a325)", container: gateway)
+
+
+Name:             metrics-6bf785f8c-kn769
+Namespace:        debug-lab
+Priority:         0
+Service Account:  default
+Node:             demo-control-plane/172.19.0.2
+Start Time:       Sat, 10 Oct 2026 02:03:54 +0000
+Labels:           app=metrics
+                  app.kubernetes.io/managed-by=Helm
+                  app.kubernetes.io/part-of=eb-debug-lab
+                  helm.sh/chart=debug-lab-2.0.0
+                  pod-template-hash=6bf785f8c
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.122
+IPs:
+  IP:           10.244.0.122
+Controlled By:  ReplicaSet/metrics-6bf785f8c
+Containers:
+  metrics:
+    Container ID:
+    Image:          docker.io/ebinterview/eb-debug-app:1.0.1
+    Image ID:
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:      50m
+      memory:   64Mi
+    Readiness:  http-get http://:8080/healthz delay=3s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      APP_MODE:  metrics
+      APP_NAME:  metrics
+      VERSION:   2.0.0
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dmxbc (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  kube-api-access-dmxbc:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  2m7s                default-scheduler  Successfully assigned debug-lab/metrics-6bf785f8c-kn769 to demo-control-plane
+  Normal   Pulled     2s (x12 over 2m6s)  kubelet            spec.containers{metrics}: Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+  Warning  Failed     2s (x12 over 2m6s)  kubelet            spec.containers{metrics}: Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "metrics-6bf785f8c-kn769_debug-lab(13f8c033-a353-42dd-b3aa-1f3b2667250b)", container: metrics)
+
+
+Name:             migrate-brc6n
+Namespace:        debug-lab
+Priority:         0
+Service Account:  default
+Node:             demo-control-plane/172.19.0.2
+Start Time:       Sat, 10 Oct 2026 02:03:54 +0000
+Labels:           app=migrate
+                  batch.kubernetes.io/controller-uid=6c8fac4d-ce30-4cd3-ab90-e223f3a063eb
+                  batch.kubernetes.io/job-name=migrate
+                  controller-uid=6c8fac4d-ce30-4cd3-ab90-e223f3a063eb
+                  job-name=migrate
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.119
+IPs:
+  IP:           10.244.0.119
+Controlled By:  Job/migrate
+Containers:
+  migrate:
+    Container ID:
+    Image:          docker.io/ebinterview/eb-debug-app:1.0.1
+    Image ID:
+    Port:           <none>
+    Host Port:      <none>
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:     50m
+      memory:  64Mi
+    Environment:
+      APP_MODE:  migrate
+      APP_NAME:  migrate
+      VERSION:   2.0.0
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-rtrt8 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  kube-api-access-rtrt8:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  2m7s                default-scheduler  Successfully assigned debug-lab/migrate-brc6n to demo-control-plane
+  Normal   Pulled     1s (x12 over 2m6s)  kubelet            spec.containers{migrate}: Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+  Warning  Failed     1s (x12 over 2m6s)  kubelet            spec.containers{migrate}: Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "migrate-brc6n_debug-lab(d98b35ef-f23e-4a99-a0f0-410e7c9bed4e)", container: migrate)
+
+
+Name:             reporter-6f7cc7495f-vzkbr
+Namespace:        debug-lab
+Priority:         0
+Service Account:  reporter
+Node:             demo-control-plane/172.19.0.2
+Start Time:       Sat, 10 Oct 2026 02:03:54 +0000
+Labels:           app=reporter
+                  app.kubernetes.io/managed-by=Helm
+                  app.kubernetes.io/part-of=eb-debug-lab
+                  helm.sh/chart=debug-lab-2.0.0
+                  pod-template-hash=6f7cc7495f
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.120
+IPs:
+  IP:           10.244.0.120
+Controlled By:  ReplicaSet/reporter-6f7cc7495f
+Containers:
+  reporter:
+    Container ID:
+    Image:          docker.io/ebinterview/eb-debug-app:1.0.1
+    Image ID:
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:      50m
+      memory:   64Mi
+    Readiness:  http-get http://:8080/healthz delay=3s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      NAMESPACE:  debug-lab (v1:metadata.namespace)
+      APP_MODE:   reporter
+      APP_NAME:   reporter
+      VERSION:    2.0.0
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-q4v2c (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  kube-api-access-q4v2c:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  2m7s                default-scheduler  Successfully assigned debug-lab/reporter-6f7cc7495f-vzkbr to demo-control-plane
+  Normal   Pulled     1s (x12 over 2m6s)  kubelet            spec.containers{reporter}: Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+  Warning  Failed     1s (x12 over 2m6s)  kubelet            spec.containers{reporter}: Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "reporter-6f7cc7495f-vzkbr_debug-lab(e3b30cfd-900c-4343-b221-02e7c36c3ec9)", container: reporter)
+
+
+Name:             worker-7694df7b9c-27hbm
+Namespace:        debug-lab
+Priority:         0
+Service Account:  default
+Node:             demo-control-plane/172.19.0.2
+Start Time:       Sat, 10 Oct 2026 02:03:54 +0000
+Labels:           app=worker
+                  app.kubernetes.io/managed-by=Helm
+                  app.kubernetes.io/part-of=eb-debug-lab
+                  helm.sh/chart=debug-lab-2.0.0
+                  pod-template-hash=7694df7b9c
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.123
+IPs:
+  IP:           10.244.0.123
+Controlled By:  ReplicaSet/worker-7694df7b9c
+Containers:
+  worker:
+    Container ID:
+    Image:          docker.io/ebinterview/eb-debug-app:1.0.1
+    Image ID:
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:      50m
+      memory:   64Mi
+    Readiness:  http-get http://:8080/healthz delay=3s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      APP_MODE:  worker
+      APP_NAME:  worker
+      VERSION:   2.0.0
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-zvvk8 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  kube-api-access-zvvk8:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                  From               Message
+  ----     ------     ----                 ----               -------
+  Normal   Scheduled  2m7s                 default-scheduler  Successfully assigned debug-lab/worker-7694df7b9c-27hbm to demo-control-plane
+  Normal   Pulled     13s (x10 over 2m6s)  kubelet            spec.containers{worker}: Container image "docker.io/ebinterview/eb-debug-app:1.0.1" already present on machine
+  Warning  Failed     13s (x10 over 2m6s)  kubelet            spec.containers{worker}: Error: container has runAsNonRoot and image has non-numeric user (nonroot), cannot verify user is non-root (pod: "worker-7694df7b9c-27hbm_debug-lab(9b77f2d6-f6c6-44a4-9dd7-3f81462dc975)", container: worker)
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ exit
+exit
+
+Script done on 2026-10-10 02:06:30+00:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-10-10 02:08:08+00:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="133" LINES="33"]
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ cd /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+files = [
+    "backend.yaml",
+    "gateway.yaml",
+    "metrics.yaml",
+    "reporter.yaml",
+    "worker.yaml",
+    "migrate-job.yaml",
+]
+
+for name in files:
+    path = Path("broken-chart/templates") / name
+    text = path.read_text()
+
+    if re.search(r"(?m)^\s*runAsUser:\s*65532\s*$", text):
+        print(f"Already fixed: {name}")
+        continue
+
+    updated, count = re.subn(
+        r"(?m)^([ \t]*runAsNonRoot:\s*true\s*)$",
+        r"\1\n\g<1>",
+        text,
+        count=1,
+    )
+
+    if count:
+        # Replace the duplicated line with the original setting plus numeric UID.
+        updated = re.sub(
+            r"(?m)^([ \t]*)runAsNonRoot:\s*true\s*$",
+            r"\1runAsNonRoot: true\n\1runAsUser: 65532",
+            text,
+            count=1,
+        )
+        path.write_text(updated)
+        print(f"Added runAsUser: 65532 to {name}")
+    else:
+        print(f"STOP: runAsNonRoot: true not found in {name}; inspect manually.")
+PY    "reporter.yaml",
+    "worker.yaml",
+    "migrate-job.yaml",
+]
+
+for name in files:
+    path = Path("broken-chart/templates") / name
+    text = path.read_text()
+
+    if re.search(r"(?m)^\s*runAsUser:\s*65532\s*$", text):
+        print(f"Already fixed: {name}")
+        continue
+
+    updated, count = re.subn(
+        r"(?m)^([ \t]*runAsNonRoot:\s*true\s*)$",
+        r"\1\n\g<1>",
+        text,
+        count=1,
+    )
+
+    if count:
+        # Replace the duplicated line with the original setting plus numeric UID.
+        updated = re.sub(
+            r"(?m)^([ \t]*)runAsNonRoot:\s*true\s*$",
+            r"\1runAsNonRoot: true\n\1runAsUser: 65532",
+            text,
+            count=1,
+        )
+        path.write_text(updated)
+        print(f"Added runAsUser: 65532 to {name}")
+    else:
+        print(f"STOP: runAsNonRoot: true not found in {name}; inspect manually.")
+PY
+Added runAsUser: 65532 to backend.yaml
+Added runAsUser: 65532 to gateway.yaml
+Added runAsUser: 65532 to metrics.yaml
+Added runAsUser: 65532 to reporter.yaml
+Added runAsUser: 65532 to worker.yaml
+Added runAsUser: 65532 to migrate-job.yaml
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A5 'runAsNonRoot:' \
+  broken-chart/templates/{backend,gateway,metrics,reporter,worker,migrate-job}.yaml
+
+helm lint ./broken-chart
+
+./scenario.sh up
+./scenario.sh verifyadmin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ grep -n -A5 'runAsNonRoot:' \
+  broken-chart/templates/{backend,gateway,metrics,reporter,worker,migrate-job}.yaml
+
+helm lint ./broken-chart
+
+./scenario.sh up
+./scenario.sh verify
+broken-chart/templates/backend.yaml:39:            runAsNonRoot: true
+broken-chart/templates/backend.yaml-40-            runAsUser: 65532
+broken-chart/templates/backend.yaml-41-            readOnlyRootFilesystem: true
+broken-chart/templates/backend.yaml-42-            allowPrivilegeEscalation: false
+broken-chart/templates/backend.yaml-43-            capabilities:
+broken-chart/templates/backend.yaml-44-              drop: ["ALL"]
+--
+broken-chart/templates/gateway.yaml:39:            runAsNonRoot: true
+broken-chart/templates/gateway.yaml-40-            runAsUser: 65532
+broken-chart/templates/gateway.yaml-41-            readOnlyRootFilesystem: true
+broken-chart/templates/gateway.yaml-42-            allowPrivilegeEscalation: false
+broken-chart/templates/gateway.yaml-43-            capabilities:
+broken-chart/templates/gateway.yaml-44-              drop: ["ALL"]
+--
+broken-chart/templates/metrics.yaml:39:            runAsNonRoot: true
+broken-chart/templates/metrics.yaml-40-            runAsUser: 65532
+broken-chart/templates/metrics.yaml-41-            readOnlyRootFilesystem: true
+broken-chart/templates/metrics.yaml-42-            allowPrivilegeEscalation: false
+broken-chart/templates/metrics.yaml-43-            capabilities:
+broken-chart/templates/metrics.yaml-44-              drop: ["ALL"]
+--
+broken-chart/templates/reporter.yaml:44:            runAsNonRoot: true
+broken-chart/templates/reporter.yaml-45-            runAsUser: 65532
+broken-chart/templates/reporter.yaml-46-            readOnlyRootFilesystem: true
+broken-chart/templates/reporter.yaml-47-            allowPrivilegeEscalation: false
+broken-chart/templates/reporter.yaml-48-            capabilities:
+broken-chart/templates/reporter.yaml-49-              drop: ["ALL"]
+--
+broken-chart/templates/worker.yaml:39:            runAsNonRoot: true
+broken-chart/templates/worker.yaml-40-            runAsUser: 65532
+broken-chart/templates/worker.yaml-41-            readOnlyRootFilesystem: true
+broken-chart/templates/worker.yaml-42-            allowPrivilegeEscalation: false
+broken-chart/templates/worker.yaml-43-            capabilities:
+broken-chart/templates/worker.yaml-44-              drop: ["ALL"]
+--
+broken-chart/templates/migrate-job.yaml:29:            runAsNonRoot: true
+broken-chart/templates/migrate-job.yaml-30-            runAsUser: 65532
+broken-chart/templates/migrate-job.yaml-31-            readOnlyRootFilesystem: true
+broken-chart/templates/migrate-job.yaml-32-            allowPrivilegeEscalation: false
+broken-chart/templates/migrate-job.yaml-33-            capabilities:
+broken-chart/templates/migrate-job.yaml-34-              drop: ["ALL"]
+==> Linting ./broken-chart
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+==> applying cluster environment (cluster-state/)
+limitrange/debug-lab-guardrails unchanged
+namespace/debug-lab unchanged
+==> installing the broken chart
+Error: UPGRADE FAILED: cannot patch "migrate" with kind Job: Job.batch "migrate" is invalid: spec.template: Invalid value: {"labels":{"app":"migrate","batch.kubernetes.io/controller-uid":"6c8fac4d-ce30-4cd3-ab90-e223f3a063eb","batch.kubernetes.io/job-name":"migrate","controller-uid":"6c8fac4d-ce30-4cd3-ab90-e223f3a063eb","job-name":"migrate"},"Spec":{"Volumes":null,"InitContainers":null,"Containers":[{"Name":"migrate","Image":"docker.io/ebinterview/eb-debug-app:1.0.1","Command":null,"Args":null,"WorkingDir":"","Ports":null,"EnvFrom":null,"Env":[{"Name":"APP_MODE","Value":"migrate","ValueFrom":null},{"Name":"APP_NAME","Value":"migrate","ValueFrom":null},{"Name":"VERSION","Value":"2.0.0","ValueFrom":null}],"Resources":{"Limits":{"cpu":"200m","memory":"128Mi"},"Requests":{"cpu":"50m","memory":"64Mi"},"Claims":null},"ResizePolicy":null,"RestartPolicy":null,"RestartPolicyRules":null,"VolumeMounts":null,"VolumeDevices":null,"LivenessProbe":null,"ReadinessProbe":null,"StartupProbe":null,"Lifecycle":null,"TerminationMessagePath":"/dev/termination-log","TerminationMessagePolicy":"File","ImagePullPolicy":"IfNotPresent","SecurityContext":{"Capabilities":{"Add":null,"Drop":["ALL"]},"Privileged":null,"SELinuxOptions":null,"WindowsOptions":null,"RunAsUser":65532,"RunAsGroup":null,"RunAsNonRoot":true,"ReadOnlyRootFilesystem":true,"AllowPrivilegeEscalation":false,"ProcMount":null,"SeccompProfile":null,"AppArmorProfile":null},"Stdin":false,"StdinOnce":false,"TTY":false}],"EphemeralContainers":null,"RestartPolicy":"Never","TerminationGracePeriodSeconds":30,"ActiveDeadlineSeconds":null,"DNSPolicy":"ClusterFirst","NodeSelector":null,"ServiceAccountName":"","AutomountServiceAccountToken":null,"NodeName":"","SecurityContext":{"HostNetwork":false,"HostPID":false,"HostIPC":false,"ShareProcessNamespace":null,"HostUsers":null,"SELinuxOptions":null,"WindowsOptions":null,"RunAsUser":null,"RunAsGroup":null,"RunAsNonRoot":null,"SupplementalGroups":null,"SupplementalGroupsPolicy":null,"FSGroup":null,"FSGroupChangePolicy":null,"Sysctls":null,"SeccompProfile":null,"AppArmorProfile":null,"SELinuxChangePolicy":null},"ImagePullSecrets":null,"Hostname":"","Subdomain":"","SetHostnameAsFQDN":null,"Affinity":null,"SchedulerName":"default-scheduler","Tolerations":null,"HostAliases":null,"PriorityClassName":"","Priority":null,"PreemptionPolicy":null,"DNSConfig":null,"ReadinessGates":null,"RuntimeClassName":null,"Overhead":null,"EnableServiceLinks":null,"TopologySpreadConstraints":null,"OS":null,"SchedulingGates":null,"ResourceClaims":null,"Resources":null,"HostnameOverride":null}}: field is immutable
+
+helm reported an error. That is not your machine misbehaving —
+it is part of the exercise. Read the error; it is evidence.
+
+Lab is (partially) installed. Investigate with kubectl, fix the chart,
+re-run './scenario.sh up' to apply your fixes, and './scenario.sh verify'
+to check progress.
+==> verifying goal state in namespace debug-lab
+  FAIL  migrate Job has not completed (does it exist? did the chart even install cleanly?)
+  FAIL  deployment backend: 0/1 ready
+  FAIL  deployment gateway: 0/1 ready
+  FAIL  deployment worker: 0/1 ready
+  FAIL  deployment reporter: 0/1 ready
+  FAIL  deployment metrics: 0/1 ready
+  PASS  no pods in CrashLoopBackOff
+  PASS  ServiceAccount debug-lab/reporter can list pods
+  FAIL  backend does not answer on http://backend:8080/healthz
+  FAIL  gateway /status does not report backend=ok
+  FAIL  reporter /report does not return a pod count
+
+9 check(s) failing, 2 passing. Keep digging — every failure is a symptom.
+admin123@DESKTOP-2D4GR71:/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab$ ecixit
+exit
+
+Script done on 2026-10-10 02:08:43+00:00 [COMMAND_EXIT_CODE="9"]
+

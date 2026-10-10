@@ -1,0 +1,192 @@
+lab/part4-session.log:2: trailing whitespace.
+[32m+[m[32m[?2004h]0;admin123@DESKTOP-2D4GR71: /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[01;32madmin123@DESKTOP-2D4GR71[00m:[01;34m/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[00m$ [7msha256sum scenario.sh[27msha256sum scenario.sh[m[41m[m
+lab/part4-session.log:3: trailing whitespace.
+[32m+[m[32m[?2004lcfa71a9845e0ee4f3accbd12cfae3583476109c33d0802b261ad7e123a3b323d  scenario.sh[m[41m[m
+lab/part4-session.log:4: trailing whitespace.
+[32m+[m[32m[?2004h]0;admin123@DESKTOP-2D4GR71: /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[01;32madmin123@DESKTOP-2D4GR71[00m:[01;34m/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[00m$ [7mhelm lint ./broken-chart[27m[m[41m[m
+lab/part4-session.log:5: trailing whitespace.
+[32m+[m[32m[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Chelm lint ./broken-chart[m[41m[m
+lab/part4-session.log:6: trailing whitespace.
+[32m+[m[32m[A[m[41m[m
+lab/part4-session.log:7: trailing whitespace.
+[32m+[m[32m[?2004l==> Linting ./broken-chart[m[41m[m
+lab/part4-session.log:8: trailing whitespace.
+[32m+[m[32m[INFO] Chart.yaml: icon is recommended[m[41m[m
+lab/part4-session.log:9: trailing whitespace.
+[32m+[m[41m[m
+lab/part4-session.log:10: trailing whitespace.
+[32m+[m[32m1 chart(s) linted, 0 chart(s) failed[m[41m[m
+lab/part4-session.log:11: trailing whitespace.
+[32m+[m[32m[?2004h]0;admin123@DESKTOP-2D4GR71: /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[01;32madmin123@DESKTOP-2D4GR71[00m:[01;34m/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[00m$ [7m./scenario.sh verify[27m./scenario.sh verify[m[41m[m
+lab/part4-session.log:12: trailing whitespace.
+[32m+[m[32m[?2004l==> verifying goal state in namespace debug-lab[m[41m[m
+lab/part4-session.log:13: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  migrate Job has not completed (does it exist? did the chart even install cleanly?)[m[41m[m
+lab/part4-session.log:14: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  deployment backend: 0/? ready[m[41m[m
+lab/part4-session.log:15: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  deployment gateway: 0/? ready[m[41m[m
+lab/part4-session.log:16: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  deployment worker: 0/? ready[m[41m[m
+lab/part4-session.log:17: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  deployment reporter: 0/? ready[m[41m[m
+lab/part4-session.log:18: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  deployment metrics: 0/? ready[m[41m[m
+lab/part4-session.log:19: trailing whitespace.
+[32m+[m[32m  [32mPASS[0m  no pods in CrashLoopBackOff[m[41m[m
+lab/part4-session.log:20: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  ServiceAccount debug-lab/reporter cannot list pods[m[41m[m
+lab/part4-session.log:21: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  backend does not answer on http://backend:8080/healthz[m[41m[m
+lab/part4-session.log:22: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  gateway /status does not report backend=ok[m[41m[m
+lab/part4-session.log:23: trailing whitespace.
+[32m+[m[32m  [31mFAIL[0m  reporter /report does not return a pod count[m[41m[m
+lab/part4-session.log:24: trailing whitespace.
+[32m+[m[41m[m
+lab/part4-session.log:25: trailing whitespace.
+[32m+[m[32m[31m10 check(s) failing[0m, 1 passing. Keep digging — every failure is a symptom.[m[41m[m
+lab/part4-session.log:26: trailing whitespace.
+[32m+[m[32m[?2004h]0;admin123@DESKTOP-2D4GR71: /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[01;32madmin123@DESKTOP-2D4GR71[00m:[01;34m/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[00m$ [7mcat broken-chart/templates/migrate-job.yaml[27m[m[41m[m
+lab/part4-session.log:27: trailing whitespace.
+[32m+[m[32m[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat broken-chart/templates/migrate-job.yaml[m[41m[m
+lab/part4-session.log:28: trailing whitespace.
+[32m+[m[32m[A[m[41m[m
+lab/part4-session.log:29: trailing whitespace.
+[32m+[m[32m[?2004l{{- if .Values.migrate.enabled }}[m[41m[m
+lab/part4-session.log:30: trailing whitespace.
+[32m+[m[32mapiVersion: batch/v1[m[41m[m
+lab/part4-session.log:31: trailing whitespace.
+[32m+[m[32mkind: Job[m[41m[m
+lab/part4-session.log:32: trailing whitespace.
+[32m+[m[32mmetadata:[m[41m[m
+lab/part4-session.log:33: trailing whitespace.
+[32m+[m[32m  name: migrate[m[41m[m
+lab/part4-session.log:34: trailing whitespace.
+[32m+[m[32m  labels:[m[41m[m
+lab/part4-session.log:35: trailing whitespace.
+[32m+[m[32m    app: migrate[m[41m[m
+lab/part4-session.log:36: trailing whitespace.
+[32m+[m[32m    {{- include "lab.labels" . | nindent 4 }}[m[41m[m
+lab/part4-session.log:37: trailing whitespace.
+[32m+[m[32mspec:[m[41m[m
+lab/part4-session.log:38: trailing whitespace.
+[32m+[m[32m  backoffLimit: {{ .Values.migrate.backoffLimit }}[m[41m[m
+lab/part4-session.log:39: trailing whitespace.
+[32m+[m[32m  template:[m[41m[m
+lab/part4-session.log:40: trailing whitespace.
+[32m+[m[32m    metadata:[m[41m[m
+lab/part4-session.log:41: trailing whitespace.
+[32m+[m[32m      labels:[m[41m[m
+lab/part4-session.log:42: trailing whitespace.
+[32m+[m[32m        app: migrate[m[41m[m
+lab/part4-session.log:43: trailing whitespace.
+[32m+[m[32m    spec:[m[41m[m
+lab/part4-session.log:44: trailing whitespace.
+[32m+[m[32m      restartPolicy: Always[m[41m[m
+lab/part4-session.log:45: trailing whitespace.
+[32m+[m[32m      containers:[m[41m[m
+lab/part4-session.log:46: trailing whitespace.
+[32m+[m[32m        - name: migrate[m[41m[m
+lab/part4-session.log:47: trailing whitespace.
+[32m+[m[32m          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"[m[41m[m
+lab/part4-session.log:48: trailing whitespace.
+[32m+[m[32m          imagePullPolicy: {{ .Values.image.pullPolicy }}[m[41m[m
+lab/part4-session.log:49: trailing whitespace.
+[32m+[m[32m          env:[m[41m[m
+lab/part4-session.log:50: trailing whitespace.
+[32m+[m[32m            - name: APP_MODE[m[41m[m
+lab/part4-session.log:51: trailing whitespace.
+[32m+[m[32m              value: "migrate"[m[41m[m
+lab/part4-session.log:52: trailing whitespace.
+[32m+[m[32m            - name: APP_NAME[m[41m[m
+lab/part4-session.log:53: trailing whitespace.
+[32m+[m[32m              value: "migrate"[m[41m[m
+lab/part4-session.log:54: trailing whitespace.
+[32m+[m[32m            - name: VERSION[m[41m[m
+lab/part4-session.log:55: trailing whitespace.
+[32m+[m[32m              value: "2.0.0"[m[41m[m
+lab/part4-session.log:56: trailing whitespace.
+[32m+[m[32m          securityContext:[m[41m[m
+lab/part4-session.log:57: trailing whitespace.
+[32m+[m[32m            runAsNonRoot: true[m[41m[m
+lab/part4-session.log:58: trailing whitespace.
+[32m+[m[32m            readOnlyRootFilesystem: true[m[41m[m
+lab/part4-session.log:59: trailing whitespace.
+[32m+[m[32m            allowPrivilegeEscalation: false[m[41m[m
+lab/part4-session.log:60: trailing whitespace.
+[32m+[m[32m            capabilities:[m[41m[m
+lab/part4-session.log:61: trailing whitespace.
+[32m+[m[32m              drop: ["ALL"][m[41m[m
+lab/part4-session.log:62: trailing whitespace.
+[32m+[m[32m          resources:[m[41m[m
+lab/part4-session.log:63: trailing whitespace.
+[32m+[m[32m            requests:[m[41m[m
+lab/part4-session.log:64: trailing whitespace.
+[32m+[m[32m              cpu: "50m"[m[41m[m
+lab/part4-session.log:65: trailing whitespace.
+[32m+[m[32m              memory: "64Mi"[m[41m[m
+lab/part4-session.log:66: trailing whitespace.
+[32m+[m[32m            limits:[m[41m[m
+lab/part4-session.log:67: trailing whitespace.
+[32m+[m[32m              cpu: "200m"[m[41m[m
+lab/part4-session.log:68: trailing whitespace.
+[32m+[m[32m              memory: "128Mi"[m[41m[m
+lab/part4-session.log:69: trailing whitespace.
+[32m+[m[32m{{- end }}[m[41m[m
+lab/part4-session.log:70: trailing whitespace.
+[32m+[m[32m[?2004h]0;admin123@DESKTOP-2D4GR71: /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[01;32madmin123@DESKTOP-2D4GR71[00m:[01;34m/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[00m$  nano [7mbroken-chart/templates/migrate-job.yaml[27mbroken-chart/templates/migrate-job.yaml[m[41m[m
+lab/part4-session.log:71: trailing whitespace.
+[32m+[m[32m[?2004l[?2004h[?1049h[22;0;0t[1;33r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[31;60H(B[0;7m[ Reading... ](B[m[31;59H(B[0;7m[ Read 41 lines ](B[m[H(B[0;7m  GNU nano 8.7.1                                  broken-chart/templates/migrate-job.yaml                                            [1;132H(B[m[32d(B[0;7m^G(B[m Help[32;17H(B[0;7m^O(B[m Write Out    (B[0;7m^F(B[m Where Is     (B[0;7m^K(B[m Cut[32;65H(B[0;7m^T(B[m Execute[81G(B[0;7m^C(B[m Location     (B[0;7mM-U(B[m Undo[32;113H(B[0;7mM-A(B[m Set Mark[33d(B[0;7m^X(B[m Exit[33;17H(B[0;7m^R(B[m Read File    (B[0;7m^\(B[m Replace[49G(B[0;7m^U(B[m Paste[33;65H(B[0;7m^J(B[m Justify[81G(B[0;7m^/(B[m Go To Line   (B[0;7mM-E(B[m Redo[33;113H(B[0;7mM-6(B[m Copy[2d[33m{{[39m(B[m- if .Values.migrate.enabled [33m}}[3d[92mapiVersion[39m: (B[mbatch/v1[4d[92mkind[39m: (B[mJob[5d[92mmetadata[39m:[6;3H[92mname[39m: (B[mmigrate[7;3H[92mlabels[39m:[8;5H[92mapp[39m: (B[mmigrate[9;5H[33m{{[39m(B[m- include [95m"lab.labels"[39m(B[m . | nindent 4 [33m}}[10d[92mspec[39m:[11;3H[92mbackoffLimit[39m: [33m{{[39m(B[m .Values.migrate.backoffLimit [33m}}[12;3H[92mtemplate[39m:[13;5H[92mmetadata[39m:[14;7H[92mlabels[39m:[15;9H[92mapp[39m: (B[mmigrate[16;5H[92mspec[39m:[17;7H[92mrestartPolicy[39m: (B[mAlways[18;7H[92mcontainers[39m:[19;8H(B[0;1m[33m[1K - (B[0m[92mname[39m: (B[mmigrate[20;11H[92mimage[39m: [95m"[33m{{[95m .Values.image.repository [33m}}[95m:[33m{{[95m .Values.image.tag [33m}}[95m"[21;11H[92mimagePullPolicy[39m: [33m{{[39m(B[m .Values.image.pullPolicy [33m}}[22;11H[92menv[39m:[23;12H(B[0;1m[33m[1K - (B[0m[92mname[39m: (B[mAPP_MODE[24;15H[92mvalue[39m: [95m"migrate"[25;12H(B[0;1m[33m[1K - (B[0m[92mname[39m: (B[mAPP_NAME[26;15H[92mvalue[39m: [95m"migrate"[27;12H(B[0;1m[33m[1K - (B[0m[92mname[39m: (B[mVERSION[28;15H[92mvalue[39m: [95m"2.0.0"[29;11H[92msecurityContext[39m:[30;13H[92mrunAsNonRoot[39m: [95mtrue[2d[39m(B[m[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h[12d[?25l[?12l[?25h[13d[?25l[?12l[?25h[14d[?25l[?12l[?25h[15d[?25l[?12l[?25h[16d[?25l[?12l[?25h[17d[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[31d[K[?12l[?25h[17;6H[?25l[?12l[?25h [?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25hA[?25l[?12l[?25hl[?25l[?12l[?25hw[?25l[?12l[?25ha[?25l[?12l[?25hy[?25l[?12l[?25hs[?25l[1;91H(B[0;7m*[132G(B[m[?12l[?25h[17;27H [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[41m [49m(B[m[K[?25l[?12l[?25h [95mN[39m(B[m[?25l[?12l[?25hNe[?25l[?12l[?25hv[?25l[?12l[?25he[?25l[?12l[?25hr[?25l[31d(B[0;7mSave modified buffer?                                                                                                                [32;1H Y(B[m Yes[K[33d(B[0;7m N(B[m No  [33;18H(B[0;7mC(B[m Cancel[K[31;23H[?12l[?25h[?25l[32d(B[0;7m^G(B[m Help[32;27H(B[0;7mM-D(B[m DOS Format[32;53H(B[0;7mM-A(B[m Append[32;79H(B[0;7mM-B(B[m Backup File[32;105H(B[0;7m^T(B[m Browse[33d(B[0;7m^C(B[m Cancel[17G          (B[0;7mM-M(B[m Mac Format[33;53H(B[0;7mM-P(B[m Prepend[33;79H(B[0;7m^Q(B[m Discard buffer[32;114H[A(B[0;7mWrite to File: broken-chart/templates/migrate-job.yaml(B[m[?12l[?25h[?25l    [1K (B[0;7m[ Writing... ](B[m[K[1;91H(B[0;7m [132G(B[m[31;58H(B[0;7m[ Wrote 41 lines ](B[m[J[33d[?12l[?25h[33;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;admin123@DESKTOP-2D4GR71: /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[01;32madmin123@DESKTOP-2D4GR71[00m:[01;34m/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[00m$ [7mhelm template debug-lab ./broken-chart \[27m[m[41m[m
+lab/part4-session.log:72: trailing whitespace.
+[32m+[m[32m[7m  --namespace debug-lab \[27m[m[41m[m
+lab/part4-session.log:73: trailing whitespace.
+[32m+[m[32m[7m  --show-only templates/migrate-job.yaml[27m[A[A]0;admin123@DESKTOP-2D4GR71: /mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[01;32madmin123@DESKTOP-2D4GR71[00m:[01;34m/mnt/c/Users/admin/Downloads/enterprisebot-submission/lab[00m$ helm template debug-lab ./broken-chart \[m[41m[m
+lab/part4-session.log:74: trailing whitespace.
+[32m+[m[32m  --namespace debug-lab \[m[41m[m
+lab/part4-session.log:75: trailing whitespace.
+[32m+[m[32m  --show-only templates/migrate-job.yaml[m[41m[m
+lab/part4-session.log:76: trailing whitespace.
+[32m+[m[32m[?2004l---[m[41m[m
+lab/part4-session.log:77: trailing whitespace.
+[32m+[m[32m# Source: debug-lab/templates/migrate-job.yaml[m[41m[m
+lab/part4-session.log:78: trailing whitespace.
+[32m+[m[32mapiVersion: batch/v1[m[41m[m
+lab/part4-session.log:79: trailing whitespace.
+[32m+[m[32mkind: Job[m[41m[m
+lab/part4-session.log:80: trailing whitespace.
+[32m+[m[32mmetadata:[m[41m[m
+lab/part4-session.log:81: trailing whitespace.
+[32m+[m[32m  name: migrate[m[41m[m
+lab/part4-session.log:82: trailing whitespace.
+[32m+[m[32m  labels:[m[41m[m
+lab/part4-session.log:83: trailing whitespace.
+[32m+[m[32m    app: migrate[m[41m[m
+lab/part4-session.log:84: trailing whitespace.
+[32m+[m[32m    app.kubernetes.io/part-of: eb-debug-lab[m[41m[m
+lab/part4-session.log:85: trailing whitespace.
+[32m+[m[32m    app.kubernetes.io/managed-by: Helm[m[41m[m
+lab/part4-session.log:86: trailing whitespace.
+[32m+[m[32m    helm.sh/chart: debug-lab-2.0.0[m[41m[m
+lab/part4-session.log:87: trailing whitespace.
+[32m+[m[32mspec:[m[41m[m
+lab/part4-session.log:88: trailing whitespace.
+[32m+[m[32m  backoffLimit: 2[m[41m[m
+lab/part4-session.log:89: trailing whitespace.
+[32m+[m[32m  template:[m[41m[m
+lab/part4-session.log:90: trailing whitespace.
+[32m+[m[32m    metadata:[m[41m[m
+lab/part4-session.log:91: trailing whitespace.
+[32m+[m[32m      labels:[m[41m[m
+lab/part4-session.log:92: trailing whitespace.
+[32m+[m[32m        app: migrate[m[41m[m
+lab/part4-session.log:93: trailing whitespace.
+[32m+[m[32m    spec:[m[41m[m
+lab/part4-session.log:94: trailing whitespace.
+[32m+[m[32m      restartPolicy: Never[m[41m[m
+lab/part4-session.log:95: trailing whitespace.
+[32m+[m[32m      containers:[m[41m[m
+lab/part4-session.log:96: trailing whitespace.
+[32m+[m[32m        - name: migrate[m[41m[m
+lab/part4-session.log:97: trailing whitespace.
+[32m+[m[32m          image: "docker.io/ebinterview/eb-debug-ap
