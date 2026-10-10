@@ -33,6 +33,8 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
+            - name: PORT
+              value: "8080"
           readinessProbe:
             httpGet:
               path: /healthz

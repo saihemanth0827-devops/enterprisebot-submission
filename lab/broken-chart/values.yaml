@@ -18,7 +18,7 @@ common:
 backend:
   replicas: 1
   env:
-    APP_MODE: "backend"
+    APP_MODE: "api"
     APP_NAME: "backend"
     VERSION: "2.0.0"
   resources:
@@ -35,7 +35,7 @@ gateway:
     APP_MODE: "gateway"
     APP_NAME: "gateway"
     VERSION: "2.0.0"
-    BACKEND_URL: "http://backend.debug-lab.svc.cluster.local:8080"
+    BACKEND_URL: "http://backend.debug-lab.svc:8080"
   resources:
     requests:
       cpu: "50m"
@@ -76,7 +76,7 @@ reporter:
 metrics:
   replicas: 1
   env:
-    APP_MODE: "metrics"
+    APP_MODE: "api"
     APP_NAME: "metrics"
     VERSION: "2.0.0"
   resources:

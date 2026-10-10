@@ -28,6 +28,11 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
+            - name: PORT
+              value: "8080"
+          volumeMounts:
+            - name: app-cache
+              mountPath: /var/cache/app
           readinessProbe:
             httpGet:
               path: /healthz
@@ -44,3 +49,6 @@ spec:
               drop: ["ALL"]
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
+      volumes:
+        - name: app-cache
+          emptyDir: {}
